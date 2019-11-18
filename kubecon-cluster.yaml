@@ -1,0 +1,64 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: kubecon-cluster
+  region: us-west-2
+  version: '1.14'
+
+vpc:
+  cidr: 10.60.0.0/16
+  autoAllocateIPv6: false
+  nat:
+    gateway: Single
+
+availabilityZones: 
+  - us-west-2b
+  - us-west-2c
+
+nodeGroups:
+  - name: kubecon-cluster-ng-01
+    labels: {
+      project: eks, 
+      type: eks,
+      workload: normal,
+      lifecycle: spot
+      }
+    ami: ami-05d586e6f773f6abf
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        certManager: true
+        appMesh: true
+        ebs: true
+        efs: true
+        albIngress: true
+        cloudWatch: true
+        xRay: true
+    ssh:
+      allow: true
+      publicKeyName: kubecon
+    tags:
+      'environment': 'kubecon'
+      'cluster-name': 'kubecon-demo'
+      'project': 'kubecon-demo'
+      'datadog': 'true'
+      'lifecycle': 'spot'
+    volumeSize: 20
+    volumeType: gp2
+    minSize: 1
+    desiredCapacity: 1
+    maxSize: 10
+    privateNetworking: false
+    instancesDistribution:
+      maxPrice: 0.17
+      instanceTypes: ["m5.xlarge", "c5.xlarge"] # At least two instance types should be specified
+      onDemandBaseCapacity: 0
+      onDemandPercentageAboveBaseCapacity: 0
+      spotInstancePools: 2
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+    # all supported types: "api", "audit", "authenticator", "controllerManager", "scheduler"
+    # supported special values: "*" and "all"
