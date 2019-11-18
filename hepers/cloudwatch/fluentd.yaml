@@ -57,16 +57,6 @@ data:
       read_from_head true
       <parse>
         @type multi_format
-        <pattern> # custom log parsing for game services, asked for kraang-importer-daemon.
-          format regexp
-          expression /\]\s(?<app.log_stream>[[:lower:]]+) \[(?<app.log_level>[[:upper:]]+)\]: \[.*] (?<log>.*)\\n","stream":"(?<stream>\w+)"/
-          time_format %Y-%m-%dT%H:%M:%S.%NZ
-        </pattern>
-        <pattern> # custom log parsing for Javalin (Americano microservice).
-          format regexp
-          expression /\[(?<app.type>.*)] (?<app.log_level>[[:upper:]]+) (?<log>.*)\\n","stream":"(?<stream>\w+)"/
-          time_format %Y-%m-%dT%H:%M:%S.%NZ
-        </pattern>
         <pattern>
           format json
           time_format %Y-%m-%dT%H:%M:%S.%NZ
